@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: MPL-2.0
 
 provider "aws" {
-  region  = "us-west-2"
+  region = "eu-west-2" # London
+  access_key = "AK..."
+  secret_key = "..."
 }
 
 data "aws_availability_zones" "available" {
@@ -23,7 +25,7 @@ module "vpc" {
   enable_vpn_gateway = false
 
   tags = {
-    project     = "project-alpha",
+    project     = "studentx",
     environment = "dev"
   }
 }
@@ -32,14 +34,14 @@ module "app_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
   version = "4.17.0"
 
-  name        = "web-sg-project-alpha-dev"
+  name        = "web-sg-studentx-dev"
   description = "Security group for web-servers with HTTP ports open within VPC"
   vpc_id      = module.vpc.vpc_id
 
   ingress_cidr_blocks = module.vpc.public_subnets_cidr_blocks
 
   tags = {
-    project     = "project-alpha",
+    project     = "studentx",
     environment = "dev"
   }
 }
@@ -48,14 +50,14 @@ module "lb_security_group" {
   source  = "terraform-aws-modules/security-group/aws//modules/web"
   version = "4.17.0"
 
-  name        = "lb-sg-project-alpha-dev"
+  name        = "lb-sg-studentx-dev"
   description = "Security group for load balancer with HTTP ports open within VPC"
   vpc_id      = module.vpc.vpc_id
 
   ingress_cidr_blocks = ["0.0.0.0/0"]
 
   tags = {
-    project     = "project-alpha",
+    project     = "studentx",
     environment = "dev"
   }
 }
@@ -70,7 +72,7 @@ module "elb_http" {
   version = "4.0.1"
 
   # Ensure load balancer name is unique
-  name = "lb-${random_string.lb_id.result}-project-alpha-dev"
+  name = "lb-${random_string.lb_id.result}-studentx-dev"
 
   internal = false
 
@@ -96,7 +98,7 @@ module "elb_http" {
   }
 
   tags = {
-    project     = "project-alpha",
+    project     = "studentx",
     environment = "dev"
   }
 }
@@ -112,7 +114,7 @@ module "ec2_instances" {
   security_group_ids = [module.app_security_group.security_group_id]
 
   tags = {
-    project     = "project-alpha",
+    project     = "studentx",
     environment = "dev"
   }
 }
